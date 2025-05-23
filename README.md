@@ -48,7 +48,7 @@ A proposta é desacoplar a autenticação da aplicação principal, mantendo os 
 ## 🔑 Usuários e Senhas Padrão
 
 - **Keycloak Admin:**
-  URL: `http://localhost:1001`
+  URL: [http://localhost:1001](http://localhost:1001)
   Usuário: `admin`
   Senha: `adminpass`
 
@@ -62,12 +62,12 @@ A proposta é desacoplar a autenticação da aplicação principal, mantendo os 
   Banco: `mydatabase`
 
 - **Mongo Express:**
-  URL: `http://localhost:1006`
+  URL: [http://localhost:1006](http://localhost:1006)
   Usuário: `admin`
   Senha: `admin`
 
 - **pgAdmin:**
-  URL: `http://localhost:1004`
+  URL: [http://localhost:1004](http://localhost:1004)
   Email: `admin@admin.com`
   Senha: `adminpass`
 
@@ -92,14 +92,14 @@ A proposta é desacoplar a autenticação da aplicação principal, mantendo os 
 
 ## 📦 Serviços e portas (via Docker Compose)
 
-| Serviço       | URL/Porta                    | Descrição                  |
-| ------------- | ---------------------------- | -------------------------- |
-| Keycloak      | <http://localhost:1001>      | Admin e login              |
-| Backend API   | <http://localhost:1002/docs> | NestJS Swagger UI          |
-| Frontend      | <http://localhost:1003>      | Angular App                |
-| pgAdmin       | <http://localhost:1004>      | Visualizador PostgreSQL    |
-| Mongo Express | <http://localhost:1006>      | Visualizador MongoDB       |
-| Instruções    | <http://localhost:1000>      | Documentação deste projeto |
+| Serviço       | URL/Porta                                                | Descrição                  |
+| ------------- | -------------------------------------------------------- | -------------------------- |
+| Keycloak      | [http://localhost:1001](http://localhost:1001)           | Admin e login              |
+| Backend API   | [http://localhost:1002/docs](http://localhost:1002/docs) | NestJS Swagger UI          |
+| Frontend      | [http://localhost:1003](http://localhost:1003)           | Angular App                |
+| pgAdmin       | [http://localhost:1004](http://localhost:1004)           | Visualizador PostgreSQL    |
+| Mongo Express | [http://localhost:1006](http://localhost:1006)           | Visualizador MongoDB       |
+| Instruções    | [http://localhost:1000](http://localhost:1000)           | Documentação deste projeto |
 
 ---
 
@@ -208,3 +208,4 @@ docker run --rm -p 8090:8089 backend-locust --host http://localhost:1002
 ```
 
 Acesse a interface web do Locust em [http://localhost:8090](http://localhost:8090) para iniciar o teste.
+*

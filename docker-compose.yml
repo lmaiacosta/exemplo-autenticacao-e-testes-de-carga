@@ -1,0 +1,102 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: keycloak-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak_user
+      POSTGRES_PASSWORD: keycloak_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.3
+    container_name: keycloak
+    restart: unless-stopped
+    command: start-dev --import-realm
+    depends_on:
+      - postgres
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_PORT: 5432
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak_pass
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: adminpass
+    ports:
+      - "1001:8080"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+
+  backend:
+    build: ./backend
+    container_name: backend-api
+    depends_on:
+      - keycloak
+    ports:
+      - "1002:4000"
+
+  mongo:
+    image: mongo:6.0
+    container_name: backend-mongo
+    restart: unless-stopped
+    ports:
+      - "1005:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo:/docker-entrypoint-initdb.d
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: mydatabase
+
+  mongo-express:
+    image: mongo-express:1.0.0-20
+    container_name: mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    ports:
+      - "1006:8081"
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    container_name: frontend-app
+    ports:
+      - "1003:80"
+    depends_on:
+      - keycloak
+
+  pgadmin:
+    image: dpage/pgadmin4:8.6
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: adminpass
+    ports:
+      - "1004:80"
+    depends_on:
+      - postgres
+  instructions:
+    build: ./instructions
+    container_name: instructions-html
+    restart: unless-stopped
+    ports:
+      - "1000:80"
+volumes:
+  postgres_data:
+  mongo_data:

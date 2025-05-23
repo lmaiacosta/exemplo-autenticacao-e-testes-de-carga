@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Instruções do Projeto</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            background: #f9f9f9;
+            color: #333;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #003366;
+        }
+
+        pre {
+            background: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+        }
+
+        code {
+            background: #eee;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #e0e0e0;
+        }
+
+        .fluxograma {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+            max-width: 700px;
+            overflow-x: auto;
+        }
+
+        .fluxograma pre {
+            background: #f4f4f4;
+            color: #003366;
+            font-size: 1em;
+            border: none;
+            padding: 0;
+        }
+
+        .credenciais {
+            background: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px 20px;
+            margin-bottom: 24px;
+            max-width: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🛡️ Autenticação com Keycloak + MongoDB como base de usuários</h1>
+    <p>Este projeto demonstra uma arquitetura moderna onde:</p>
+    <ul>
+        <li>✅ O <strong>Keycloak</strong> é usado <em>somente como provedor de autenticação</em> (SSO, JWT, OIDC)</li>
+        <li>✅ Os <strong>dados do usuário</strong> (preferências, perfil, etc.) ficam armazenados no
+            <strong>MongoDB</strong></li>
+        <li>✅ O backend usa <strong>NestJS</strong> e valida os tokens emitidos pelo Keycloak</li>
+        <li>✅ O frontend em Angular executa o fluxo completo de login, troca de token e integração com backend</li>
+    </ul>
+
+    <div class="credenciais">
+        <h3>🔑 Usuários e Senhas Padrão</h3>
+        <ul>
+            <li><strong>Keycloak Admin:</strong> <br>
+                URL: <code>http://localhost:1001</code><br>
+                Usuário: <code>admin</code> <br>
+                Senha: <code>adminpass</code>
+            </li>
+            <li><strong>Usuário de Teste Keycloak:</strong> <br>
+                Usuário: <code>testuser</code> <br>
+                Senha: <code>password</code>
+            </li>
+            <li><strong>MongoDB (admin/root):</strong> <br>
+                Usuário: <code>admin</code> <br>
+                Senha: <code>admin</code> <br>
+                Banco: <code>mydatabase</code>
+            </li>
+            <li><strong>Mongo Express:</strong> <br>
+                URL: <code>http://localhost:1006</code><br>
+                Usuário: <code>admin</code> <br>
+                Senha: <code>admin</code>
+            </li>
+            <li><strong>pgAdmin:</strong> <br>
+                URL: <code>http://localhost:1004</code><br>
+                Email: <code>admin@admin.com</code> <br>
+                Senha: <code>adminpass</code>
+            </li>
+        </ul>
+    </div>
+
+    <h2>💡 Por que essa arquitetura?</h2>
+    <table>
+        <tr>
+            <th>Componente</th>
+            <th>Função</th>
+        </tr>
+        <tr>
+            <td>🔐 Keycloak</td>
+            <td>Autenticação (login, logout, geração de token JWT com OIDC)</td>
+        </tr>
+        <tr>
+            <td>🧠 MongoDB</td>
+            <td>Armazena os dados do usuário (username, perfil, preferências etc.)</td>
+        </tr>
+        <tr>
+            <td>⚙️ Backend NestJS</td>
+            <td>Valida tokens JWT e busca/gera usuários no Mongo com base no token</td>
+        </tr>
+        <tr>
+            <td>🌐 Frontend Angular</td>
+            <td>Interface de login, troca de code por token e chamada autenticada ao backend</td>
+        </tr>
+    </table>
+
+    <h2>🧪 Fluxo de autenticação integrado</h2>
+    <div class="fluxograma">
+        <strong>Fluxograma do Processo:</strong><br>
+        <img src="./fluxograma.png" alt="Fluxograma do processo de autenticação integrado"
+            style="max-width:100%;margin-top:16px;">
+    </div>
+
+    <h2>📦 Serviços e portas (via Docker Compose)</h2>
+    <table>
+        <tr>
+            <td><a href="http://localhost:1001" target="_blank"><strong>Keycloak</strong></a></td>
+            <td><code>http://localhost:1001</code></td>
+            <td>Admin e login</td>
+        </tr>
+        <tr>
+            <td><a href="http://localhost:1002/docs" target="_blank"><strong>Backend API (Swagger)</strong></a></td>
+            <td><code>http://localhost:1002/docs</code></td>
+            <td>NestJS Swagger UI</td>
+        </tr>
+        <tr>
+            <td><a href="http://localhost:1003" target="_blank"><strong>Frontend</strong></a></td>
+            <td><code>http://localhost:1003</code></td>
+            <td>Angular App</td>
+        </tr>
+        <tr>
+            <td><a href="http://localhost:1004" target="_blank"><strong>pgAdmin</strong></a></td>
+            <td><code>http://localhost:1004</code></td>
+            <td>Visualizador PostgreSQL</td>
+        </tr>
+        <tr>
+            <td><a href="http://localhost:1006" target="_blank"><strong>Mongo Express</strong></a></td>
+            <td><code>http://localhost:1006</code></td>
+            <td>Visualizador MongoDB</td>
+        </tr>
+        <tr>
+            <td><a href="http://localhost:1000" target="_blank"><strong>Instruções</strong></a></td>
+            <td><code>http://localhost:1000</code></td>
+            <td>Documentação deste projeto</td>
+        </tr>
+    </table>
+
+    <h2>🛠️ Como rodar localmente</h2>
+    <ol>
+        <li>Clone o repositório e suba todos os serviços:
+            <pre><code>docker compose up --build</code></pre>
+        </li>
+        <li>Acesse o <a href="http://localhost:1003" target="_blank">Frontend Angular</a> e clique em "Entrar".</li>
+        <li>Faça login no <a href="http://localhost:1001" target="_blank">Keycloak</a> usando o usuário
+            <code>testuser</code> e senha <code>password</code>.</li>
+        <li>O frontend troca o <code>code</code> por <code>access_token</code> automaticamente.</li>
+        <li>Ao clicar em "Chamar Backend Autenticado", o frontend envia o token para o backend.</li>
+        <li>O backend valida o token e busca/cria o usuário no MongoDB (com campos extras).</li>
+        <li>Você pode visualizar os usuários criados acessando o <a href="http://localhost:1006" target="_blank">Mongo
+                Express</a> (admin/admin).</li>
+        <li>Para testar e documentar a API, acesse o <a href="http://localhost:1002/docs" target="_blank">Swagger do
+                Backend</a>.</li>
+    </ol>
+
+    <h2>✅ Dicas e próximos passos</h2>
+    <ul>
+        <li>Para pré-cadastrar um usuário no MongoDB, edite o arquivo <code>mongo/init-user.js</code> (já configurado
+            para criar <code>testuser</code> com campos extras).</li>
+        <li>Implemente refresh token e proteção de rotas conforme necessidade.</li>
+        <li>Consulte a documentação do <a href="https://www.keycloak.org/docs/latest/" target="_blank">Keycloak</a> para
+            customizações.</li>
+    </ul>
+
+    <p>Feito com ❤️ para escalar autenticação de forma limpa e integrada.</p>
+</body>
+
+</html>

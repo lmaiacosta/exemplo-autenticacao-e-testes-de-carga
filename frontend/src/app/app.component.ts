@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 const keycloakConfig = {
   url: 'http://localhost:1001/realms/demo-realm/protocol/openid-connect/auth',
+  logoutUrl: 'http://localhost:1001/realms/demo-realm/protocol/openid-connect/logout',
   clientId: 'frontend-client',
   redirectUri: 'http://localhost:1003/',
   responseType: 'code',
@@ -32,8 +33,7 @@ export class AppComponent {
     localStorage.removeItem('access_token');
     this.loggedIn = false;
     this.username = null;
-    window.location.href = keycloakConfig.url.replace('/auth', '/logout') +
-      `?redirect_uri=${encodeURIComponent(keycloakConfig.redirectUri)}`;
+    window.location.href = `${keycloakConfig.logoutUrl}?redirect_uri=${encodeURIComponent(keycloakConfig.redirectUri)}`;
   }
 
   ngOnInit() {

@@ -1,4 +1,4 @@
-version: "3.8"
+# version: "3.8"
 
 services:
   postgres:
@@ -92,7 +92,9 @@ services:
     depends_on:
       - postgres
   instructions:
-    build: ./instructions
+    build:
+      dockerfile: ./instructions/Dockerfile
+      context: .
     container_name: instructions-html
     restart: unless-stopped
     ports:

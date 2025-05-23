@@ -1,6 +1,28 @@
 ---
-title: "🛡️ Autenticação com Keycloak + MongoDB como base de usuários"
+title: "🛡️ Autenticação com Keycloak + MongoDB como base de usuários + Testes de carga"
 ---
+
+## 📂 Sumário
+
+- [🛡️ Autenticação com Keycloak + MongoDB como base de usuários](#️-autenticação-com-keycloak--mongodb-como-base-de-usuários)
+  - [🚀 Cenário](#-cenário)
+  - [🔑 Usuários e Senhas Padrão](#-usuários-e-senhas-padrão)
+  - [💡 Por que essa arquitetura?](#-por-que-essa-arquitetura)
+  - [🧪 Fluxo de autenticação integrado](#-fluxo-de-autenticação-integrado)
+  - [📦 Serviços e portas (via Docker Compose)](#-serviços-e-portas-via-docker-compose)
+  - [🛠️ Como rodar localmente](#️-como-rodar-localmente)
+- [🧪 Testes de Carga com Locust](#-testes-de-carga-com-locust)
+  - [Como executar os testes de carga](#como-executar-os-testes-de-carga)
+    - [1. Keycloak](#1-keycloak)
+    - [2. Backend](#2-backend)
+  - [Observações](#observações)
+  - [Outros](#outros)
+
+## Requisitos
+
+- Docker e Docker Compose instalados na máquina.
+- Portas 1000 a 1006 disponíveis para uso.
+- Acesso à internet para baixar as imagens do Docker.
 
 # 🛡️ Autenticação com Keycloak + MongoDB como base de usuários
 
@@ -53,12 +75,12 @@ A proposta é desacoplar a autenticação da aplicação principal, mantendo os 
 
 ## 💡 Por que essa arquitetura?
 
-| Componente         | Função                                                                 |
-|--------------------|------------------------------------------------------------------------|
-| 🔐 Keycloak        | Autenticação (login, logout, geração de token JWT com OIDC)             |
-| 🧠 MongoDB         | Armazena os dados do usuário (username, perfil, preferências etc.)      |
-| ⚙️ Backend NestJS  | Valida tokens JWT e busca/gera usuários no Mongo com base no token      |
-| 🌐 Frontend Angular| Interface de login, troca de code por token e chamada autenticada ao backend |
+| Componente         | Função                                                                       |
+| ------------------ | ---------------------------------------------------------------------------- |
+| 🔐 Keycloak         | Autenticação (login, logout, geração de token JWT com OIDC)                  |
+| 🧠 MongoDB          | Armazena os dados do usuário (username, perfil, preferências etc.)           |
+| ⚙️ Backend NestJS   | Valida tokens JWT e busca/gera usuários no Mongo com base no token           |
+| 🌐 Frontend Angular | Interface de login, troca de code por token e chamada autenticada ao backend |
 
 ---
 
@@ -70,36 +92,36 @@ A proposta é desacoplar a autenticação da aplicação principal, mantendo os 
 
 ## 📦 Serviços e portas (via Docker Compose)
 
-| Serviço     | URL/Porta                       | Descrição                   |
-|-------------|---------------------------------|-----------------------------|
-| Keycloak    | <http://localhost:1001>           | Admin e login               |
-| Backend API | <http://localhost:1002/docs>      | NestJS Swagger UI           |
-| Frontend    | <http://localhost:1003>           | Angular App                 |
-| pgAdmin     | <http://localhost:1004>           | Visualizador PostgreSQL     |
-| Mongo Express| <http://localhost:1006>          | Visualizador MongoDB        |
-| Instruções  | <http://localhost:1000>           | Documentação deste projeto  |
+| Serviço       | URL/Porta                    | Descrição                  |
+| ------------- | ---------------------------- | -------------------------- |
+| Keycloak      | <http://localhost:1001>      | Admin e login              |
+| Backend API   | <http://localhost:1002/docs> | NestJS Swagger UI          |
+| Frontend      | <http://localhost:1003>      | Angular App                |
+| pgAdmin       | <http://localhost:1004>      | Visualizador PostgreSQL    |
+| Mongo Express | <http://localhost:1006>      | Visualizador MongoDB       |
+| Instruções    | <http://localhost:1000>      | Documentação deste projeto |
 
 ---
 
 ## 🛠️ Como rodar localmente
 
-1. Certifiquece que as portas de 1000 1006 da sua maquina estejam disponiveis, para uso com o comando (* O resultado desse comando de ser vazio *):
+1. Certifique-se de que as portas de 1000 a 1006 da sua máquina estejam disponíveis, para uso com o comando (*O resultado desse comando deve ser vazio*):
 
-  ```bash
-  sudo lsof -i :1000-1006 -P -n | grep LISTEN
-  ```
+   ```bash
+   sudo lsof -i :1000-1006 -P -n | grep LISTEN
+   ```
 
 2. Clone o repositório e suba todos os serviços:
 
-  ```bash
-  docker compose up --build -d
-  ```
+   ```bash
+   docker compose up --build -d
+   ```
 
 3. Certifique-se que os containers do projeto estão rodando:
 
-  ```bash
-  docker ps -a --filter "name=keycloak|backend|frontend|mongo-express|pgadmin|instructions" --format "table {{.Names}}\t{{.Status}}"
-  ```
+   ```bash
+   docker ps -a --filter "name=keycloak|backend|frontend|mongo-express|pgadmin|instructions" --format "table {{.Names}}\t{{.Status}}"
+   ```
 
 4. Estas instruções podem ser visualizadas na url [http://localhost:1000](http://localhost:1000).
 
@@ -115,4 +137,74 @@ A proposta é desacoplar a autenticação da aplicação principal, mantendo os 
 
 10. Você pode visualizar os usuários criados acessando o [Mongo Express](http://localhost:1006) (`admin`/`admin`).
 
-1. Para testar e documentar a API, acesse o [Swagger do Backend](http://localhost:1002/docs).
+11. Para testar e documentar a API, acesse o [Swagger do Backend](http://localhost:1002/docs).
+
+---
+
+# 🧪 Testes de Carga com Locust
+
+Este projeto inclui testes de carga prontos para execução com [Locust](https://locust.io/) em cada serviço principal. Os arquivos `locustfile.py` estão localizados na pasta `tests` de cada serviço.
+
+---
+
+## Como executar os testes de carga
+
+### 1. Keycloak
+
+- **Arquivo de teste:** [`keycloak/tests/locustfile.py`](keycloak/tests/locustfile.py)
+- **Dockerfile:** [`keycloak/tests/Dockerfile`](keycloak/tests/Dockerfile)
+
+**Passos:**
+
+```sh
+cd keycloak/tests
+docker build -t keycloak-locust .
+docker run --rm -p 8089:8089 keycloak-locust --host http://localhost:1001
+```
+
+Acesse a interface web do Locust em [http://localhost:8089](http://localhost:8089) para iniciar o teste.
+
+---
+
+### 2. Backend
+
+- **Arquivo de teste:** [`backend/tests/locustfile.py`](backend/tests/locustfile.py)
+- **Dockerfile:** [`backend/tests/Dockerfile`](backend/tests/Dockerfile)
+
+**Passos:**
+
+```sh
+cd backend/tests
+docker build -t backend-locust .
+docker run --rm -p 8090:8089 backend-locust --host http://localhost:1002
+```
+
+Acesse a interface web do Locust em [http://localhost:8090](http://localhost:8090) para iniciar o teste.
+
+---
+
+## Observações
+
+- Os testes simulam múltiplos usuários acessando os principais endpoints de autenticação e API.
+- É possível customizar os arquivos `locustfile.py` para simular diferentes cenários.
+- Os testes podem ser executados em paralelo para diferentes serviços, basta alterar a porta mapeada do Locust (`-p ...:8089`).
+
+---
+
+## Outros
+
+> 💡 **Dica:**
+> A interface web do Locust permite ajustar em tempo real o número de usuários simultâneos e a taxa de requisições.
+teste:** [`backend/tests/locustfile.py`](backend/tests/locustfile.py)
+
+- **Dockerfile:** [`backend/tests/Dockerfile`](backend/tests/Dockerfile)
+
+**Passos:**
+
+```sh
+cd backend/tests
+docker build -t backend-locust .
+docker run --rm -p 8090:8089 backend-locust --host http://localhost:1002
+```
+
+Acesse a interface web do Locust em [http://localhost:8090](http://localhost:8090) para iniciar o teste.

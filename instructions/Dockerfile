@@ -1,5 +1,5 @@
 # Stage 1: Build HTML with Pandoc
-FROM pandoc/core:latest as builder
+FROM pandoc/core:latest AS builder
 
 WORKDIR /work
 
